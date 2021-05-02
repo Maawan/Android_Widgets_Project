@@ -43,6 +43,7 @@ public class WidgetProvider extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
             views.setRemoteAdapter(R.id.listView , serviceIntent);
 
+
             Intent clickIntent = new Intent(context , WidgetProvider.class);
             clickIntent.setAction("Click");
             PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context , 0 , clickIntent , 0);
