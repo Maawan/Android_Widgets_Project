@@ -12,4 +12,16 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/bar"
         android:id="@+id/listView"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/bar"
+        android:text="Loading ..."
+        android:gravity="center"
+        android:background="#80CBC4"
+        android:textColor="#fff"
+        android:textSize="30dp"
+        android:id="@+id/loadingView"
+        android:textStyle="bold"/>
+
 </RelativeLayout>

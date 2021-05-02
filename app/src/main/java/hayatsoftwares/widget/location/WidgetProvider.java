@@ -42,7 +42,7 @@ public class WidgetProvider extends AppWidgetProvider {
             serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
             views.setRemoteAdapter(R.id.listView , serviceIntent);
-
+            views.setEmptyView(R.id.listView , R.id.loadingView);
 
             Intent clickIntent = new Intent(context , WidgetProvider.class);
             clickIntent.setAction("Click");
