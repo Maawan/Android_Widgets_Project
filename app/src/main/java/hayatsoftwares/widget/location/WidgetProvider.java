@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.opengl.Visibility;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -25,12 +27,15 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         for (int appWidgetId : appWidgetIds) {
+
             Intent serviceIntent = new Intent(context , WidgetService.class);
             serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID , appWidgetId);
             serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
             views.setRemoteAdapter(R.id.listView , serviceIntent);
             views.setEmptyView(R.id.listView , R.id.loadingView);
+            views.setOnClickPendingIntent(R.id.work_tab , getPendingSelfIntent(context , "WORK_TAB" , appWidgetId));
+            views.setOnClickPendingIntent(R.id.personal_tab , getPendingSelfIntent(context , "PER_TAB" , appWidgetId));
 
             Intent clickIntent = new Intent(context , WidgetProvider.class);
             clickIntent.setAction("Click");
@@ -58,6 +63,32 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if("PER_TAB".equals(intent.getAction())){
+            RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
+            ComponentName widget = new ComponentName(context , WidgetProvider.class);
+            //views.setInt(R.id.work_ta , "setBackgroundResource" , R.drawable.outline_white);
+            views.setTextViewText(R.id.work_tab , "WORK");
+            views.setTextViewText(R.id.personal_tab , "PERSONAL ✔️");
+//            views.setInt(R.id.personal_tab , "setForegroundResource" , R.drawable.outline_white);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(widget , views);
+        }
+        if("WORK_TAB".equals(intent.getAction())){
+            Toast.makeText(context, "Button is Hitted", Toast.LENGTH_SHORT).show();
+//            RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
+//            views.setViewVisibility(R.id.listView , View.GONE);
+//            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+//            manager.updateAppWidget(intent.getIntExtra("ID" , 0),views);
+            RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_provider);
+            ComponentName widget = new ComponentName(context , WidgetProvider.class);
+            views.setInt(R.id.work_tab , "setBackgroundResource" , R.drawable.outline_white);
+            views.setTextViewText(R.id.work_tab , "WORK ✔️");
+            //views.setViewVisibility(R.id.listView , View.INVISIBLE);
+            views.setTextViewText(R.id.personal_tab , "PERSONAL");
+//            views.setInt(R.id.personal_tab , "setForegroundResource" , R.drawable.outline_white);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(widget , views);
+        }
         if("Click".equals(intent.getAction())){
 
             AppWidgetManager mgr = AppWidgetManager.getInstance(context);
@@ -101,5 +132,11 @@ public class WidgetProvider extends AppWidgetProvider {
             return false;
         }
         return true;
+    }
+    protected PendingIntent getPendingSelfIntent(Context context, String action , int appWidgetID) {
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        intent.putExtra("ID" , appWidgetID);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 }
